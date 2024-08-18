@@ -2,6 +2,8 @@
 
 ## Case Study #1: Danny's Diner
 
+![image](https://8weeksqlchallenge.com/images/case-study-designs/1.png)
+
 ### Overview
 
 This case study is part of the [8-Week SQL Challenge](https://8weeksqlchallenge.com) created by Danny Ma. The challenge focuses on analyzing customer behavior at Danny's Diner, a small fictional restaurant. The goal is to help the owner, Danny, understand customer ordering patterns, optimize menu offerings, and improve overall customer satisfaction through data-driven decisions.
