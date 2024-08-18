@@ -6,6 +6,8 @@
 [![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=SfdS3WREZEo&t=1603s)
 Watch the solution on [YouTube](https://www.youtube.com/watch?v=SfdS3WREZEo&t=1603s).
 
+[![Danny's Diner](https://img.youtube.com/vi/SfdS3WREZEo&t/0.jpg)](https://www.youtube.com/watch?v=SfdS3WREZEo&t)
+
 ### 1. Total Sales per Customer
 ```sql
 -- SQL Query to calculate total sales for each customer
