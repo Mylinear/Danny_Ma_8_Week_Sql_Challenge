@@ -2,7 +2,7 @@
 
 ## Case Study #1: Danny's Diner
 
-![image](https://8weeksqlchallenge.com/images/case-study-designs/1.png)
+![image](https://8weeksqlchallenge.com/images/case-study-designs/1.png width = "500")
 
 ### Overview
 
@@ -36,31 +36,7 @@ The primary objectives of this case study are:
 4. Discover any trends in customer orders over time.
 
 ## Dataset
-
-The dataset consists of three tables:
-- **sales**
-- **menu**
-- **members**
-
-### sales Table
-| column_name | data_type |
-|-------------|-----------|
-| customer_id | VARCHAR   |
-| order_date  | DATE      |
-| product_id  | INTEGER   |
-
-### menu Table
-| column_name | data_type |
-|-------------|-----------|
-| product_id | INTEGER   |
-| product_name | VARCHAR   |
-| price       | INTEGER   |
-
-### members Table
-| column_name | data_type |
-|-------------|-----------|
-| customer_id | VARCHAR   |
-| join_date   | DATE      |
+You can find script [here](https://github.com/Mylinear/Danny_Ma_8_Week_Sql_Challenge/blob/main/Case_Study_1_Danny's_Diner/script.sql)
 
 ---
 
