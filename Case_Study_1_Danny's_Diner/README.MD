@@ -14,5 +14,5 @@ Watch the solution on [YouTube](https://www.youtube.com/watch?v=SfdS3WREZEo&t=16
 
 -- Add your solution here
 ```
-[![Watch the video](https://img.youtube.com/vi/SfdS3WREZEo&t=1604s/maxresdefault.jpg)](https://youtu.be/SfdS3WREZEo&t=1604s)
+[![Watch the video](https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)](https://youtu.be/SfdS3WREZEo)
 
