@@ -1,5 +1,5 @@
-
-
+-- I have deleted first two lines of code. Because I didn't want to write more code by creating the schema.
+```sql
 CREATE TABLE sales (
   "customer_id" VARCHAR(1),
   "order_date" DATE,
@@ -50,3 +50,4 @@ INSERT INTO members
 VALUES
   ('A', '2021-01-07'),
   ('B', '2021-01-09');
+```
