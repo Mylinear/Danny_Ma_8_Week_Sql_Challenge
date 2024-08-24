@@ -158,8 +158,8 @@ First, we find out how many of each product each customer buys.
 
 ```sql
 SELECT customer_id,
-		product_name,
-		count(s.product_id)
+	product_name,
+	count(s.product_id)
 from sales s
 join menu m on m.product_id = s.product_id
 group by 1,2
@@ -168,3 +168,24 @@ order by customer_id, 3 DESC;
 #### Output
 ![image](https://github.com/user-attachments/assets/0dbb859b-1708-4cf5-88ab-6b541c730d66)
 
+#### Stage_2
+
+At this stage, with the rank function, we sort the number of products ordered by customers based on customer_id in descending order. The reason we chose the rank function here is that there are equal number of ordered products. I thought it was a better choice to get all of the equal number of products. 
+Then we turn the query into a CTE and list the products that each customer has ordered the most. 
+
+```sql
+with tablo as(
+SELECT customer_id,
+		product_name,
+		count(s.product_id),
+		rank() over(PARTITION by customer_id order by count(s.product_id) desc)	rn
+from sales s
+join menu m on m.product_id = s.product_id
+group by 1,2) 
+SELECT customer_id,
+		product_name
+from tablo
+where rn = 1;
+```
+#### Output
+![image](https://github.com/user-attachments/assets/03f05ea1-e77c-48da-81e2-1c71d8c32627)
