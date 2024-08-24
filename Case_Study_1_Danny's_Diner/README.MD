@@ -220,6 +220,17 @@ left join members mem on s.customer_id = mem.customer_id
 Since we did join operation in our first query, we obtained the common rows in both sales and members table in our output. Therefore, our table consists of 12 rows.
 In our second query, since we did left join, values that are not in the members table also appear. so our table consists of 15 rows. 
 
+#### Stage_2
 
+Since the question says `after the customer becomes a member`, I decided to use join instead of left join. 
+I also added a condition. I add the condition that order_date is greater than or equal to join_date. The reason I put equal is that the customer may have ordered on the day he became a member. In other words, he may have been a member and then ordered on the same day. 
 
+select * 
+from sales s
+join menu m on m.product_id = s.product_id
+join members mem on s.customer_id = mem.customer_id
+where order_date >= join_date
+order by 1
+
+![image](https://github.com/user-attachments/assets/01a99d79-ded2-4e6b-a0c0-3fd2034a7252)
 
