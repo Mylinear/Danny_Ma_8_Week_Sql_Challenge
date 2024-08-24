@@ -74,14 +74,14 @@ If I choose row number, it will bring me the first one in the table from the pro
 ```sql
 with table_1 as(
 select customer_id,
-		order_date,
-		product_name,
-		rank() over(partition by customer_id order by order_date ) rn
+	order_date,
+	product_name,
+	rank() over(partition by customer_id order by order_date ) rn
 from sales s
 join menu m on m.product_id = s.product_id
 )
 select customer_id,
-		product_name
+	product_name
 from table_1
 where rn = 1;
 ```
@@ -93,15 +93,16 @@ where rn = 1;
 Although this is a correct output, it is not very nice that the last two lines are the same. I use a distinct statement to get rid of this.
 
 ```sql
+with table_1 as(
 select customer_id,
-		order_date,
-		product_name,
-		rank() over(partition by customer_id order by order_date ) rn
+	order_date,
+	product_name,
+	rank() over(partition by customer_id order by order_date ) rn
 from sales s
 join menu m on m.product_id = s.product_id
 )
 select distinct customer_id,
-		product_name
+	product_name
 from table_1
 where rn = 1;
 ```
@@ -123,10 +124,12 @@ First we need to find out how many of each product are sold.
 
 ```sql
 SELECT product_name,
-		count(s.product_id)
+	count(s.product_id)
 from sales s
 join menu m on m.product_id = s.product_id
 group by 1;
 ```
+#### Output
+![image](https://github.com/user-attachments/assets/35c4b3eb-75ce-4d5b-9ca2-b61ef62d036c)
 
 
