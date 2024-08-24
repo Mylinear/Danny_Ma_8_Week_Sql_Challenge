@@ -19,6 +19,7 @@ FROM SALES S
 JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
 GROUP BY 1;
 ```
+#### Output
 ![Q1](https://github.com/user-attachments/assets/4a059577-db03-4e4f-b4f5-e9c5e74a5823)
 
 ### Conclusion
@@ -39,6 +40,9 @@ select customer_id,
 from sales
 group by 1;
 ```
+#### Output
+![image](https://github.com/user-attachments/assets/075d7366-6624-4a50-b8b1-65d4861b3dc6)
+
 ### Conclusion
 Customer A visited the restaurant 4 times, Customer B visited the restaurant 6 times and Customer C visited the restaurant twice. Customer B is the most loyal customer and Customer A could be encouraged to visit the restaurant more often. We should also check if customer C is still a customer and if not, we can investigate why not.
 
