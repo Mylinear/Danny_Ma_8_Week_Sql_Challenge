@@ -2,7 +2,7 @@
 
 <img src="https://8weeksqlchallenge.com/images/case-study-designs/1.png" width="500">
 
-## The best solutions you can find on the internet are in this repo. I also shared the solution to this case on my YouTube channel (unfortunately only in Turkish).
+##The best solutions you can find on the internet are in this repo. I have solved and explained each question step by step. I also made explanations after each question as if I was preparing a report. I also shared the solution to this case on my YouTube channel (unfortunately only in Turkish).
 
 
 [![Watch the video](https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)](https://youtu.be/SfdS3WREZEo)
