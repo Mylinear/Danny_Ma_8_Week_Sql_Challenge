@@ -254,4 +254,4 @@ select customer_id,
 from table_1
 where rn = 1
 ```
-![image](https://github.com/user-attachments/assets/d615e092-c6b1-4f6c-b866-c2cbc464e398)
+![image](https://github.com/user-attachments/assets/906ca43e-fe58-4781-99b1-1dc323c6dc2e)
