@@ -146,6 +146,7 @@ limit 1;
 ```
 #### Output
 ![image](https://github.com/user-attachments/assets/61fc2058-7804-46d7-802d-4cb8bae23644)
+
 ### Conclusion
 Since ramen is the most ordered product, it is important to pay close attention to the supply of the ingredients required for this product. Thus, it is necessary to make sure that the demand can always be met. 
 
@@ -159,7 +160,7 @@ First, we find out how many of each product each customer buys.
 ```sql
 SELECT customer_id,
 	product_name,
-	count(s.product_id)
+	count(s.product_id) order_count
 from sales s
 join menu m on m.product_id = s.product_id
 group by 1,2
@@ -176,16 +177,22 @@ Then we turn the query into a CTE and list the products that each customer has o
 ```sql
 with tablo as(
 SELECT customer_id,
-		product_name,
-		count(s.product_id),
-		rank() over(PARTITION by customer_id order by count(s.product_id) desc)	rn
+	product_name,
+	count(s.product_id) order_count,
+	rank() over(PARTITION by customer_id order by count(s.product_id) desc)	rn
 from sales s
 join menu m on m.product_id = s.product_id
 group by 1,2) 
 SELECT customer_id,
-		product_name
+	product_name,
+	order_count
 from tablo
 where rn = 1;
 ```
 #### Output
-![image](https://github.com/user-attachments/assets/03f05ea1-e77c-48da-81e2-1c71d8c32627)
+![image](https://github.com/user-attachments/assets/c273eb57-19e3-49d7-8f02-8227d4bbe757)
+
+### Conclusion
+Customer A's most ordered product is ramen. Customer B ordered curry, sushi and ramen in equally . Customer C's favorite product is ramen
+
+### 6. Which item was purchased first by the customer after they became a member?
