@@ -137,7 +137,7 @@ group by 1;
 At this stage, we sort the products according to the number of sales descending and take the first row with the limit command.
 ``` sql
 SELECT product_name,
-		count(s.product_id)
+	count(s.product_id)
 from sales s
 join menu m on m.product_id = s.product_id
 group by 1
@@ -146,4 +146,25 @@ limit 1;
 ```
 #### Output
 ![image](https://github.com/user-attachments/assets/61fc2058-7804-46d7-802d-4cb8bae23644)
+### Conclusion
+Since ramen is the most ordered product, it is important to pay close attention to the supply of the ingredients required for this product. Thus, it is necessary to make sure that the demand can always be met. 
+
+### 5. Which item was the most popular for each customer?
+
+#### Explanation 
+#### Stage_1
+
+First, we find out how many of each product each customer buys. 
+
+```sql
+SELECT customer_id,
+		product_name,
+		count(s.product_id)
+from sales s
+join menu m on m.product_id = s.product_id
+group by 1,2
+order by customer_id, 3 DESC;
+```
+#### Output
+![image](https://github.com/user-attachments/assets/0dbb859b-1708-4cf5-88ab-6b541c730d66)
 
