@@ -225,12 +225,33 @@ In our second query, since we did left join, values that are not in the members 
 Since the question says `after the customer becomes a member`, I decided to use join instead of left join. 
 I also added a condition. I add the condition that order_date is greater than or equal to join_date. The reason I put equal is that the customer may have ordered on the day he became a member. In other words, he may have been a member and then ordered on the same day. 
 
+```sql
 select * 
 from sales s
 join menu m on m.product_id = s.product_id
 join members mem on s.customer_id = mem.customer_id
 where order_date >= join_date
 order by 1
-
+```
 ![image](https://github.com/user-attachments/assets/01a99d79-ded2-4e6b-a0c0-3fd2034a7252)
 
+#### Stage_2
+
+In the last stage, I added row_number by grouping by customer and sorting by date. Then I turned this query into a cte and called customer_id and product_name from those with row_number value 1.
+```sql
+with table_1 as(
+select s.customer_id,
+	order_date,
+	product_name,
+	row_number() over(partition by s.customer_id order by order_date) rn
+from sales s
+join menu m on m.product_id = s.product_id
+join members mem on s.customer_id = mem.customer_id
+where order_date > join_date
+)
+select customer_id,
+		product_name
+from table_1
+where rn = 1
+```
+![image](https://github.com/user-attachments/assets/d615e092-c6b1-4f6c-b866-c2cbc464e398)
