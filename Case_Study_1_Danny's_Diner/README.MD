@@ -45,7 +45,7 @@ Customer A visited the restaurant 4 times, Customer B visited the restaurant 6 t
 ### 3. What was the first item from the menu purchased by each customer?
 
 #### Explanation 
-##### Stage_1
+#### Stage_1
 
 As the first step, I call row_number, rank and dense_rank window functions with customer_id, order_date and product_name. I group by customer and sort by order date. Then I need to decide which of these 3 window functions is suitable for me.
 
@@ -60,10 +60,10 @@ from sales s
 join menu m on m.product_id = s.product_id
 order by customer_id, order_date;
 ```
-### Output
+#### Output
 ![stage_1](https://github.com/user-attachments/assets/bd77a5fc-b0ef-41f6-ba30-3e6932658b11)
 
-##### Stage_2
+#### Stage_2
 
 If I choose row number, it will bring me the first one in the table from the products purchased on the same date. But since there is no time information on the dates, I don't know which one was purchased first. So I think it is a better choice to get all the products purchased on the same date and I choose to use the rank function. If I use the dense_rank function, I get the same output. 
 
@@ -81,5 +81,26 @@ select customer_id,
 from table_1
 where rn = 1;
 ```
-### Output
+#### Output
 ![image](https://github.com/user-attachments/assets/db07dbe9-6239-4d17-8c92-abbf5bc32805)
+
+#### Stage_3
+
+Although this is a correct output, it is not very nice that the last two lines are the same. I use a distinct statement to get rid of this.
+
+```sql
+select customer_id,
+		order_date,
+		product_name,
+		rank() over(partition by customer_id order by order_date ) rn
+from sales s
+join menu m on m.product_id = s.product_id
+)
+select distinct customer_id,
+		product_name
+from table_1
+where rn = 1;
+```
+#### Output
+![image](https://github.com/user-attachments/assets/3ad523d3-5220-45af-9e73-ef6e308cd718)
+
