@@ -8,7 +8,7 @@
 [![Watch the video](https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)](https://youtu.be/SfdS3WREZEo)
 
 ## Case Study Questions
-###1. What is the total amount each customer spent at the restaurant?
+### 1. What is the total amount each customer spent at the restaurant?
 #### Explanation 
 The menu table contains the price for each product. We would have to join the sales and menu tables then sum the prices for the orders made by each customer after grouping by the customer_id .
 
@@ -28,6 +28,18 @@ This table shows us the amount spent by each customer.
 The spending of customer A and customer B is very close to each other and about twice as much as the spending of customer C. 
 Work could be done to increase Customer C's spending to the level of Customer A and Customer B, or to investigate why Customer C is not spending as much as the others.
 
-###2. How many days has each customer visited the restaurant?
+### 2. How many days has each customer visited the restaurant?
+
+#### Explanation 
+When solving this question, we need to pay attention that we must use the distinct expression when counting the order dates. Because here Danny is asking us how many days each customer visited the restaurant. When we examine the table, customers can make more than one visit on the same day. 
+
+``` sql
+select customer_id,
+	count(distinct order_date)
+from sales
+group by 1;
+```
+### Conclusion
+Customer A visited the restaurant 4 times, Customer B visited the restaurant 6 times and Customer C visited the restaurant twice. Customer B is the most loyal customer and Customer A could be encouraged to visit the restaurant more often. We should also check if customer C is still a customer and if not, we can investigate why not.
 
 
