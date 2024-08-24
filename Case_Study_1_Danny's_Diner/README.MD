@@ -81,4 +81,5 @@ select customer_id,
 from table_1
 where rn = 1;
 ```
-
+### Output
+![image](https://github.com/user-attachments/assets/db07dbe9-6239-4d17-8c92-abbf5bc32805)
