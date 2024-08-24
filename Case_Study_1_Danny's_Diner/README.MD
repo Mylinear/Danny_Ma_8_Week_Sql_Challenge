@@ -132,4 +132,18 @@ group by 1;
 #### Output
 ![image](https://github.com/user-attachments/assets/35c4b3eb-75ce-4d5b-9ca2-b61ef62d036c)
 
+#### Stage_2
+
+At this stage, we sort the products according to the number of sales descending and take the first row with the limit command.
+``` sql
+SELECT product_name,
+		count(s.product_id)
+from sales s
+join menu m on m.product_id = s.product_id
+group by 1
+order by 2 DESC
+limit 1;
+```
+#### Output
+![image](https://github.com/user-attachments/assets/61fc2058-7804-46d7-802d-4cb8bae23644)
 
