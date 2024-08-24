@@ -60,6 +60,8 @@ from sales s
 join menu m on m.product_id = s.product_id
 order by customer_id, order_date;
 ```
+### Output
+![stage_1](https://github.com/user-attachments/assets/bd77a5fc-b0ef-41f6-ba30-3e6932658b11)
 
 ##### Stage_2
 
