@@ -42,4 +42,41 @@ group by 1;
 ### Conclusion
 Customer A visited the restaurant 4 times, Customer B visited the restaurant 6 times and Customer C visited the restaurant twice. Customer B is the most loyal customer and Customer A could be encouraged to visit the restaurant more often. We should also check if customer C is still a customer and if not, we can investigate why not.
 
+### 3. What was the first item from the menu purchased by each customer?
+
+#### Explanation 
+##### Stage_1
+
+As the first step, I call row_number, rank and dense_rank window functions with customer_id, order_date and product_name. I group by customer and sort by order date. Then I need to decide which of these 3 window functions is suitable for me.
+
+```sql
+select customer_id,
+		order_date,
+		product_name,
+		row_number() over(partition by customer_id order by order_date ),
+		rank() over(partition by customer_id order by order_date ),
+		dense_rank() over(partition by customer_id order by order_date )
+from sales s
+join menu m on m.product_id = s.product_id
+order by customer_id, order_date;
+```
+
+##### Stage_2
+
+If I choose row number, it will bring me the first one in the table from the products purchased on the same date. But since there is no time information on the dates, I don't know which one was purchased first. So I think it is a better choice to get all the products purchased on the same date and I choose to use the rank function. If I use the dense_rank function, I get the same output. 
+
+```sql
+with table_1 as(
+select customer_id,
+		order_date,
+		product_name,
+		rank() over(partition by customer_id order by order_date ) rn
+from sales s
+join menu m on m.product_id = s.product_id
+)
+select customer_id,
+		product_name
+from table_1
+where rn = 1;
+```
 
