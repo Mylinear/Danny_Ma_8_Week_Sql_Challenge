@@ -196,3 +196,30 @@ where rn = 1;
 Customer A's most ordered product is ramen. Customer B ordered curry, sushi and ramen in equally . Customer C's favorite product is ramen
 
 ### 6. Which item was purchased first by the customer after they became a member?
+#### Explanation 
+#### Stage_1
+
+First of all, I join the menu table with the sales table. Then I first join with the members table to show the difference. Then I do left join. 
+The outputs are as follows. 
+```sql
+select * 
+from sales s
+join menu m on m.product_id = s.product_id
+join members mem on s.customer_id = mem.customer_id;
+```
+![image](https://github.com/user-attachments/assets/a7672985-f920-46ac-a535-3fc475b3dd55)
+
+```sql
+select * 
+from sales s
+join menu m on m.product_id = s.product_id
+left join members mem on s.customer_id = mem.customer_id
+```
+![image](https://github.com/user-attachments/assets/6df4bd39-9ce1-48ec-8691-8e3574670e67)
+
+Since we did join operation in our first query, we obtained the common rows in both sales and members table in our output. Therefore, our table consists of 12 rows.
+In our second query, since we did left join, values that are not in the members table also appear. so our table consists of 15 rows. 
+
+
+
+
