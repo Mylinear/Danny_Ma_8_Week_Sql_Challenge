@@ -108,3 +108,25 @@ where rn = 1;
 #### Output
 ![image](https://github.com/user-attachments/assets/3ad523d3-5220-45af-9e73-ef6e308cd718)
 
+### Conclusion
+
+Customer A ordered sushi and curry for the first time. We don't know which of these she ordered first because the data doesn't have time information, but we know that she ordered both on the same day. 
+Customer B ordered curry for the first time.
+Customer C ordered ramen for the first time. 
+
+### 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+
+#### Explanation 
+#### Stage_1
+
+First we need to find out how many of each product are sold. 
+
+```sql
+SELECT product_name,
+		count(s.product_id)
+from sales s
+join menu m on m.product_id = s.product_id
+group by 1;
+```
+
+
