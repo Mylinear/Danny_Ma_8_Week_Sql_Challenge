@@ -2,15 +2,17 @@
 
 <img src="https://8weeksqlchallenge.com/images/case-study-designs/1.png" width="500">
 
-##The best solutions you can find on the internet are in this repo. I have solved and explained each question step by step. I also made explanations after each question as if I was preparing a report. I also shared the solution to this case on my YouTube channel (unfortunately only in Turkish).
-
+## Overview
+This repository contains the best solutions you'll find on the internet for Danny's Diner case study. I've solved and explained each question step by step, providing detailed explanations after each question, almost like preparing a report. Additionally, I've shared the solution to this case on my [YouTube channel](https://youtu.be/SfdS3WREZEo) (only available in Turkish).
 
 [![Watch the video](https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)](https://youtu.be/SfdS3WREZEo)
 
 ## Case Study Questions
 ### 1. What is the total amount each customer spent at the restaurant?
-#### Explanation 
-The menu table contains the price for each product. We would have to join the sales and menu tables then sum the prices for the orders made by each customer after grouping by the customer_id .
+
+**Explanation**  
+To calculate the total amount each customer spent, we need to join the `sales` and `menu` tables, then sum the prices of the orders made by each customer. We group the results by `customer_id` to get the totals.
+
 
 ``` sql
 SELECT CUSTOMER_ID,
@@ -22,160 +24,159 @@ GROUP BY 1;
 #### Output
 ![Q1](https://github.com/user-attachments/assets/4a059577-db03-4e4f-b4f5-e9c5e74a5823)
 
-### Conclusion
 
-Conclusion
-This table shows us the amount spent by each customer. 
-The spending of customer A and customer B is very close to each other and about twice as much as the spending of customer C. 
-Work could be done to increase Customer C's spending to the level of Customer A and Customer B, or to investigate why Customer C is not spending as much as the others.
+**Conclusion**  
+This table shows the total amount spent by each customer. Customers A and B spent almost the same amount, which is about twice as much as what Customer C spent. We could explore strategies to increase Customer C's spending to match that of Customers A and B, or investigate why Customer C is spending less.
 
 ### 2. How many days has each customer visited the restaurant?
 
-#### Explanation 
-When solving this question, we need to pay attention that we must use the distinct expression when counting the order dates. Because here Danny is asking us how many days each customer visited the restaurant. When we examine the table, customers can make more than one visit on the same day. 
+**Explanation**  
+When answering this question, it's important to use the `DISTINCT` keyword when counting the order dates, as Danny is asking for the number of distinct days each customer visited the restaurant. Customers may have made multiple visits on the same day, so we need to count unique dates.
 
-``` sql
-select customer_id,
-	count(distinct order_date)
-from sales
-group by 1;
+```sql
+SELECT CUSTOMER_ID,
+	COUNT(DISTINCT ORDER_DATE)
+FROM SALES
+GROUP BY 1;
 ```
+
 #### Output
 ![image](https://github.com/user-attachments/assets/075d7366-6624-4a50-b8b1-65d4861b3dc6)
 
-### Conclusion
-Customer A visited the restaurant 4 times, Customer B visited the restaurant 6 times and Customer C visited the restaurant twice. Customer B is the most loyal customer and Customer A could be encouraged to visit the restaurant more often. We should also check if customer C is still a customer and if not, we can investigate why not.
+**Conclusion**  
+Customer A visited the restaurant 4 times, Customer B visited 6 times, and Customer C visited twice. Customer B is the most loyal customer. We could encourage Customer A to visit more frequently and investigate why Customer C's visits are so few.
 
 ### 3. What was the first item from the menu purchased by each customer?
 
-#### Explanation 
-#### Stage_1
-
-As the first step, I call row_number, rank and dense_rank window functions with customer_id, order_date and product_name. I group by customer and sort by order date. Then I need to decide which of these 3 window functions is suitable for me.
+**Explanation**  
+**Stage 1:**  
+First, I used the `ROW_NUMBER`, `RANK`, and `DENSE_RANK` window functions with `customer_id`, `order_date`, and `product_name`. I grouped by customer and sorted by order date. The goal was to determine which of these window functions would be most appropriate for identifying the first item each customer purchased.
 
 ```sql
-select customer_id,
-		order_date,
-		product_name,
-		row_number() over(partition by customer_id order by order_date ),
-		rank() over(partition by customer_id order by order_date ),
-		dense_rank() over(partition by customer_id order by order_date )
-from sales s
-join menu m on m.product_id = s.product_id
-order by customer_id, order_date;
+SELECT CUSTOMER_ID,
+	ORDER_DATE,
+	PRODUCT_NAME,
+	ROW_NUMBER() OVER (PARTITION BY CUSTOMER_ID ORDER BY ORDER_DATE),
+	RANK() OVER (PARTITION BY CUSTOMER_ID ORDER BY ORDER_DATE),
+	DENSE_RANK() OVER (PARTITION BY CUSTOMER_ID ORDER BY ORDER_DATE)
+FROM SALES S
+JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
+ORDER BY CUSTOMER_ID, ORDER_DATE;
 ```
+
 #### Output
 ![stage_1](https://github.com/user-attachments/assets/bd77a5fc-b0ef-41f6-ba30-3e6932658b11)
 
-#### Stage_2
-
-If I choose row number, it will bring me the first one in the table from the products purchased on the same date. But since there is no time information on the dates, I don't know which one was purchased first. So I think it is a better choice to get all the products purchased on the same date and I choose to use the rank function. If I use the dense_rank function, I get the same output. 
+**Stage 2:**  
+If I choose `ROW_NUMBER`, it will return only the first product purchased on the same date. However, since there's no time information, we don't know which item was purchased first on that date. Therefore, I chose the `RANK` function, which returns all items purchased on the same date, as a better option. The `DENSE_RANK` function would give the same result in this context.
 
 ```sql
-with table_1 as(
-select customer_id,
-	order_date,
-	product_name,
-	rank() over(partition by customer_id order by order_date ) rn
-from sales s
-join menu m on m.product_id = s.product_id
+WITH table_1 AS (
+SELECT CUSTOMER_ID,
+	ORDER_DATE,
+	PRODUCT_NAME,
+	RANK() OVER (PARTITION BY CUSTOMER_ID ORDER BY ORDER_DATE) RN
+FROM SALES S
+JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
 )
-select customer_id,
-	product_name
-from table_1
-where rn = 1;
+SELECT CUSTOMER_ID,
+	PRODUCT_NAME
+FROM table_1
+WHERE RN = 1;
 ```
+
 #### Output
 ![image](https://github.com/user-attachments/assets/db07dbe9-6239-4d17-8c92-abbf5bc32805)
 
-#### Stage_3
-
-Although this is a correct output, it is not very nice that the last two lines are the same. I use a distinct statement to get rid of this.
+**Stage 3:**  
+Although this output is correct, it's not ideal to have duplicate rows for the same customer. To resolve this, I used the `DISTINCT` keyword.
 
 ```sql
-with table_1 as(
-select customer_id,
-	order_date,
-	product_name,
-	rank() over(partition by customer_id order by order_date ) rn
-from sales s
-join menu m on m.product_id = s.product_id
+WITH table_1 AS (
+SELECT CUSTOMER_ID,
+	ORDER_DATE,
+	PRODUCT_NAME,
+	RANK() OVER (PARTITION BY CUSTOMER_ID ORDER BY ORDER_DATE) RN
+FROM SALES S
+JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
 )
-select distinct customer_id,
-	product_name
-from table_1
-where rn = 1;
+SELECT DISTINCT CUSTOMER_ID,
+	PRODUCT_NAME
+FROM table_1
+WHERE RN = 1;
 ```
+
 #### Output
 ![image](https://github.com/user-attachments/assets/3ad523d3-5220-45af-9e73-ef6e308cd718)
 
-### Conclusion
+**Conclusion**  
+Customer A ordered sushi and curry on their first visit. We don't know which was ordered first due to the lack of time information, but we know both were ordered on the same day. Customer B's first order was curry, and Customer C's was ramen.
 
-Customer A ordered sushi and curry for the first time. We don't know which of these she ordered first because the data doesn't have time information, but we know that she ordered both on the same day. 
-Customer B ordered curry for the first time.
-Customer C ordered ramen for the first time. 
 
 ### 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
 
-#### Explanation 
-#### Stage_1
-
-First we need to find out how many of each product are sold. 
+**Explanation**  
+**Stage 1:**  
+First, we need to determine how many of each product was sold.
 
 ```sql
-SELECT product_name,
-	count(s.product_id)
-from sales s
-join menu m on m.product_id = s.product_id
-group by 1;
+SELECT PRODUCT_NAME,
+	COUNT(S.PRODUCT_ID)
+FROM SALES S
+JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
+GROUP BY 1;
 ```
+
 #### Output
 ![image](https://github.com/user-attachments/assets/35c4b3eb-75ce-4d5b-9ca2-b61ef62d036c)
 
-#### Stage_2
+**Stage 2:**  
+Next, we sort the products by the number of sales in descending order and select the top product using the `LIMIT` command.
 
-At this stage, we sort the products according to the number of sales descending and take the first row with the limit command.
-``` sql
-SELECT product_name,
-	count(s.product_id)
-from sales s
-join menu m on m.product_id = s.product_id
-group by 1
-order by 2 DESC
-limit 1;
+```sql
+SELECT PRODUCT_NAME,
+	COUNT(S.PRODUCT_ID)
+FROM SALES S
+JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 1;
 ```
+
 #### Output
 ![image](https://github.com/user-attachments/assets/61fc2058-7804-46d7-802d-4cb8bae23644)
 
-### Conclusion
-Since ramen is the most ordered product, it is important to pay close attention to the supply of the ingredients required for this product. Thus, it is necessary to make sure that the demand can always be met. 
+**Conclusion**  
+Ramen is the most ordered item on the menu. It's crucial to ensure that the ingredients required for ramen are always in stock to meet customer demand.
 
 ### 5. Which item was the most popular for each customer?
 
-#### Explanation 
-#### Stage_1
-
-First, we find out how many of each product each customer buys. 
+**Explanation**  
+**Stage 1:**  
+First, we calculate how many of each product each customer bought.
 
 ```sql
-SELECT customer_id,
-	product_name,
-	count(s.product_id) order_count
-from sales s
-join menu m on m.product_id = s.product_id
-group by 1,2
-order by customer_id, 3 DESC;
+SELECT CUSTOMER_ID,
+	PRODUCT_NAME,
+	COUNT(S.PRODUCT_ID) ORDER_COUNT
+FROM SALES S
+JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
+GROUP BY 1,2
+ORDER BY CUSTOMER_ID, 3 DESC;
 ```
+
 #### Output
 ![image](https://github.com/user-attachments/assets/0dbb859b-1708-4cf5-88ab-6b541c730d66)
 
 #### Stage_2
 
-At this stage, with the rank function, we sort the number of products ordered by customers based on customer_id in descending order. The reason we chose the rank function here is that there are equal number of ordered products. I thought it was a better choice to get all of the equal number of products. 
-Then we turn the query into a CTE and list the products that each customer has ordered the most. 
+
+In this stage, we use the RANK() function to rank the products for each customer based on how many times they ordered them. The product with the highest rank is the one they ordered the most. We chose the RANK() function because it allows us to capture all products that have the same order count. This way, if a customer ordered multiple products the same number of times, all of those products will be considered equally popular.
+
+Next, we turn this query into a Common Table Expression (CTE) and then retrieve the most frequently ordered product(s) for each customer.
 
 ```sql
-with tablo as(
+with table_1 as(
 SELECT customer_id,
 	product_name,
 	count(s.product_id) order_count,
@@ -186,7 +187,7 @@ group by 1,2)
 SELECT customer_id,
 	product_name,
 	order_count
-from tablo
+from table_1
 where rn = 1;
 ```
 #### Output
@@ -255,3 +256,4 @@ from table_1
 where rn = 1
 ```
 ![image](https://github.com/user-attachments/assets/906ca43e-fe58-4781-99b1-1dc323c6dc2e)
+
