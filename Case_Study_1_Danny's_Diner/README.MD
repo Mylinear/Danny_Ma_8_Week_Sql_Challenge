@@ -331,16 +331,186 @@ A müşterisi üye olmadan önce 2 ürün almış ve 25$ lık harcama yapmış. 
 Öncelikle müşterilerin her bir aldıkları ürünü onun fiyatını ve bu üründen kaç puan kazandıklarını gösteren bir tablo oluşturdum.
 
 ```sql
+SELECT CUSTOMER_ID,
+		S.PRODUCT_ID,
+		PRODUCT_NAME,
+		PRICE,
+		CASE 
+			WHEN PRODUCT_NAME = 'SUSHI' THEN PRICE * 2 * 10
+			ELSE PRICE * 10
+			END POINTS
+FROM SALES S
+JOIN MENU M ON M.PRODUCT_ID = S.PRODUCT_ID
+ORDER BY 1
+```
+#### Output
+![image](https://github.com/user-attachments/assets/b014e9f4-bc8b-42c1-acc6-b44e34e3895e)
+
+#### Stage_2
+
+Bu aşamada yukarıdaki sorguyu bir CTE haline getirerek her bir müşterinin kaç puan aldıklarını gösterdim.
+
+```sql
+with tablo as(
 select customer_id,
 		s.product_id,
 		product_name,
 		price,
 		case 
-			when product_name = 'sushi' then price * 2 * 10
+			when product_name = 'sushi' then price * 2* 10
 			else price * 10
 			end points
 from sales s
 full outer join menu m on m.product_id = s.product_id
+)
+select customer_id,
+		sum(points)
+from tablo
+group by 1
+order by 2 desc
 ```
+
+#### Output
+
+![image](https://github.com/user-attachments/assets/f5eaf71c-70b4-46bd-a6c6-f32b855e1add)
+
+### Conclusion
+
+10. n the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+
+#### Explanation 
+#### Stage_1
+ilk haftayı bulabilmek için end date adında bir sutunu join_date sütununa 6 ekleyerek buldum. Arından case when yapısı ile eğer order_date join_date ile end_date arasında ise iki kat puan hesapladım. Sushi için de iki kat puan hesaplamaya devam ettim. Aksi halde normal puan hesapladım. Son olarak order_date i ocak ayı sonu olarak belirledim.
+
+```sql
+Select s.customer_id,
+		join_date start_date,
+		join_date + 6 end_date,
+		order_date,		
+		product_name,
+		price,
+		case 
+			when order_date BETWEEN join_date and join_date + 6 then price * 2*10
+			when product_name = 'sushi' then price * 2* 10
+			else price*10
+			end as points
+from sales s
+join members mem on mem.customer_id = s.customer_id
+join menu m on m.product_id = s.product_id
+WHERE order_date <= '2021-01-31'
+```
+#### Stage_2
+Bu aşamada müşteri bazında gruplayarak toplam puanları buldum.
+
+```sql
+with table_1 as(
+Select s.customer_id,
+		join_date start_date,
+		join_date + 6 end_date,
+		order_date,		
+		product_name,
+		price,
+		case 
+			when order_date BETWEEN join_date and join_date + 6 then price * 2*10
+			when product_name = 'sushi' then price * 2* 10
+			else price*10
+			end as points
+from sales s
+join members mem on mem.customer_id = s.customer_id
+join menu m on m.product_id = s.product_id
+WHERE order_date <= '2021-01-31'
+)
+SELECT customer_id,
+		sum(points)
+from table_1
+group by 1
+```
+### Conclusion
+
+En çok puan toplayan müşterimiz A müşterisinin 1370 puanı var, onu B müşterisi 820 puan ile takip ediyor.
+
+# Bonus Questions
+
+1. Join All The Things
+
+#### Explanation 
+Aşağıdaki birleştirilmiş tablo ile hızlı bir şekilde içgörü elde edebiliriz. Member sütundaki "N" harfi alışveriş yapıldığı tarihte o müşterinin henüz üyemiz olmadığını gösteriyor. "Y" harfi ise o müşterinin alışveriş yapıldığı tarihte müşterimiz olduğunu gösteriyor.
+
+#### Stage_1
+members sutünu ile left join yaptım. Çünkü eğer join işlemi yapsaydım C müşterisini göremezdim. Ayrıca C müşterisinin join_date değeri olmadığı için order_date ile join_date arasında bir kıyaslama yapamıyor. bundan dolayı member sutünuna "N" değeri geliyor.
+
+```sql
+SELECT s.customer_id,
+		order_date,
+		product_name,
+		price, 
+		join_date,
+	case 
+		when order_date >= join_date then 'Y' else 'N' end as member
+
+from sales s
+join menu m on s.product_id = m.product_id
+LEFT join members mem on mem.customer_id = s.customer_id
+order by 1,2
+```
+![image](https://github.com/user-attachments/assets/0ccde785-ba8d-4951-a348-fc9f2ad01f13)
+
+#### Stage_2
+Yukarıdaki yaklaşım bize her ne kadar doğru sonuçlar veriyor olsa da join_date in null olduğu değerler için ayrı bir koşul konmasının daha doğru olduğunu düşünüyorum. Böylece eğer else kısmındaki değerler "Y" bile olsa bize doğru sonuç verir. join_date sütununu çıkarıyorum ve istenen tabloyu elde ediyorum.
+
+```sql
+SELECT s.customer_id,
+		order_date,
+		product_name,
+		price, 
+		case 
+			when join_date is null then 'N' 
+			when order_date >= join_date then 'Y' else 'N' end as member
+
+from sales s
+join menu m on s.product_id = m.product_id
+LEFT join members mem on mem.customer_id = s.customer_id
+order by 1,2
+```
+![image](https://github.com/user-attachments/assets/b2181d57-8c93-4b65-8bfd-533e2b1066a4)
+
+2. Rank All The Things
+
+#### Explanation 
+Danny also requires further information about the ranking of customer products, but he purposely does not need the ranking for non-member purchases so he expects null ranking values for the records when customers are not yet part of the loyalty program.
+
+Bu sorunun çözümünde case when yapısı ile eğer member değil ise null değerler verdiriyorum. eğer üye ise rank ile sıralama yapıyorum. Burada en önemli nokta sıralama yaparken hem customer_id için hem de member için partition by kullanmak gerektiğidir. aksi halde null değerler için de bir sıralama olur ve istediğimiz sıralamaya ulaşamayız.
+
+```sql
+with table_1 as(
+SELECT s.customer_id,
+		order_date,
+		product_name,
+		price, 
+		case 
+			when join_date is null then 'N' 
+			when order_date >= join_date then 'Y' else 'N' end as member
+
+from sales s
+join menu m on s.product_id = m.product_id
+LEFT join members mem on mem.customer_id = s.customer_id
+order by 1,2
+	)
+SELECT *,
+		case 
+			WHEN member = 'N' then NULL
+			else
+				rank() OVER(PARTITION by customer_id, member order by order_date) end as ranking
+from table_1
+```
+
+
+
+
+
+
+
+
+
 
 
