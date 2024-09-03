@@ -8,7 +8,7 @@ This repository contains the best solutions you'll find on the internet for Dann
 [![Watch the video](https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)](https://youtu.be/SfdS3WREZEo)
 <p align="center">
   <a href="https://youtu.be/SfdS3WREZEo">
-    <img src="https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)" alt="YouTube Video" width="600">
+    <img src="https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg" alt="YouTube Video" width="600">
   </a>
 </p>
 
