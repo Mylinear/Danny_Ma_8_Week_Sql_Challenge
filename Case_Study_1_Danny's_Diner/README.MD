@@ -265,7 +265,9 @@ where rn = 1
 -- 7. Which item was purchased just before the customer became a member?
 
 #### Stage_1
-Öncelikle rank() fonksiyonu kullanarak müşterilerin üye olmadan önce sipariş ettikleri ürünleri tarih sırasına göre azalacak şekilde sıraladım. Burada rank fonksiyonu kullanmamın sebebi A müşterisinin aynı tarihte ürün sipariş etmesinden dolayı (dense_rank() fonksiyonu da kullanılabilir di).
+
+First, I used the RANK() function to rank the products ordered by customers before they became members in descending order by date. The reason I chose RANK() is that Customer A ordered multiple items on the same date. I could use dense_rank() function
+
 ``` sql
 select s.customer_id,
 		order_date,
@@ -280,7 +282,7 @@ where order_date < join_date
 
 #### Stage_2
 
-Bu aşamada yukarıdaki tabloyu bir CTE haline getiriyorum ve sıra numarası 1 olan customer_id ve product_name alıyorum. Böylece üye olmadan önceki en son siparişlerini bulabiliyorum.
+In this step, I created a Common Table Expression (CTE) and selected the customer_id and product_name with a rank of 1. This allowed me to identify the last item ordered by each customer before they became a member.
 
 ```sql
 with table_1 as(
@@ -301,11 +303,12 @@ where rn = 1
 ![image](https://github.com/user-attachments/assets/5680fb55-449e-4c48-9f7d-953e9012a33e)
 
 ### Conclusion
-A mmüşterisi üye olmadan hemen önce sushi ve curry siparişini aynı gün vermiş. B müşterisi ise sushi sipariş etmiş.
+
+Customer A ordered both sushi and curry on the same day just before becoming a member. Customer B, on the other hand, ordered sushi.
 
 -- 8. What is the total items and amount spent for each member before they became a member?
 
-Müşteri bazında gruplayarak sipariş ettikleri ürünleri saydırdım ve ödedikleri miktarı topladım
+By grouping by customer, I counted the number of items they ordered and summed the total amount they spent.
 
 ```sql
 select s.customer_id,
@@ -322,13 +325,13 @@ order by 1
 ![image](https://github.com/user-attachments/assets/60e2cdbe-d545-4e0b-90a9-da1e3b8a15d8)
 
 ### Conclusion
-A müşterisi üye olmadan önce 2 ürün almış ve 25$ lık harcama yapmış. B müşterisi ise 3 ürün almış ve 40$ lık harcama yapmış.
+Customer A ordered 2 items and spent $25 before becoming a member. Customer B ordered 3 items and spent $40.
 
 9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 
 #### Stage_1
 
-Öncelikle müşterilerin her bir aldıkları ürünü onun fiyatını ve bu üründen kaç puan kazandıklarını gösteren bir tablo oluşturdum.
+First, I created a table showing each customer's purchases, including the product price and the number of points earned for each item.
 
 ```sql
 SELECT CUSTOMER_ID,
@@ -348,7 +351,7 @@ ORDER BY 1
 
 #### Stage_2
 
-Bu aşamada yukarıdaki sorguyu bir CTE haline getirerek her bir müşterinin kaç puan aldıklarını gösterdim.
+In this step, I used a CTE to calculate the total points earned by each customer.
 
 ```sql
 with tablo as(
@@ -380,7 +383,8 @@ order by 2 desc
 
 #### Explanation 
 #### Stage_1
-ilk haftayı bulabilmek için end date adında bir sutunu join_date sütununa 6 ekleyerek buldum. Arından case when yapısı ile eğer order_date join_date ile end_date arasında ise iki kat puan hesapladım. Sushi için de iki kat puan hesaplamaya devam ettim. Aksi halde normal puan hesapladım. Son olarak order_date i ocak ayı sonu olarak belirledim.
+
+To determine the first week, I created a column named end_date by adding 6 days to the join_date. Then, using a CASE WHEN statement, I calculated double points for orders placed within the first week and for sushi. For orders not fulfilling these conditions, I calculated normal points. Finally, I filtered the results for the month of January.
 
 ```sql
 Select s.customer_id,
@@ -400,7 +404,7 @@ join menu m on m.product_id = s.product_id
 WHERE order_date <= '2021-01-31'
 ```
 #### Stage_2
-Bu aşamada müşteri bazında gruplayarak toplam puanları buldum.
+In this step, I grouped by customer ID to calculate their total points.
 
 ```sql
 with table_1 as(
@@ -427,7 +431,7 @@ group by 1
 ```
 ### Conclusion
 
-En çok puan toplayan müşterimiz A müşterisinin 1370 puanı var, onu B müşterisi 820 puan ile takip ediyor.
+Customer A has 1370 points, followed by Customer B with 820 points.
 
 # Bonus Questions
 
