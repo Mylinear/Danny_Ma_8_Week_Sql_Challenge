@@ -10,11 +10,6 @@ This repository contains the best solutions you'll find on the internet for Dann
     <img src="https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg" alt="YouTube Video" width="600">
   </a>
 </p>
-<p align="center">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/IHos-NXgzd8" frameborder="0" allowfullscreen></iframe>
-</p>
-
-
 
 
 ## Case Study Questions
@@ -246,7 +241,7 @@ order by 1
 ```
 ![image](https://github.com/user-attachments/assets/01a99d79-ded2-4e6b-a0c0-3fd2034a7252)
 
-#### Stage_2
+#### Stage_3
 
 In the last stage, I added row_number by grouping by customer and sorting by date. Then I turned this query into a cte and called customer_id and product_name from those with row_number value 1.
 ```sql
@@ -266,4 +261,86 @@ from table_1
 where rn = 1
 ```
 ![image](https://github.com/user-attachments/assets/906ca43e-fe58-4781-99b1-1dc323c6dc2e)
+
+-- 7. Which item was purchased just before the customer became a member?
+
+#### Stage_1
+Öncelikle rank() fonksiyonu kullanarak müşterilerin üye olmadan önce sipariş ettikleri ürünleri tarih sırasına göre azalacak şekilde sıraladım. Burada rank fonksiyonu kullanmamın sebebi A müşterisinin aynı tarihte ürün sipariş etmesinden dolayı (dense_rank() fonksiyonu da kullanılabilir di).
+``` sql
+select s.customer_id,
+		order_date,
+		product_name,
+		rank() over(partition by s.customer_id order by order_date desc) rn
+from sales s
+join menu m on m.product_id = s.product_id
+join members mem on s.customer_id = mem.customer_id
+where order_date < join_date
+```
+![image](https://github.com/user-attachments/assets/3da6543e-4a73-4431-8789-f51b983a3ccd)
+
+#### Stage_2
+
+Bu aşamada yukarıdaki tabloyu bir CTE haline getiriyorum ve sıra numarası 1 olan customer_id ve product_name alıyorum. Böylece üye olmadan önceki en son siparişlerini bulabiliyorum.
+
+```sql
+with table_1 as(
+select s.customer_id,
+		order_date,
+		product_name,
+		rank() over(partition by s.customer_id order by order_date desc) rn
+from sales s
+join menu m on m.product_id = s.product_id
+join members mem on s.customer_id = mem.customer_id
+where order_date < join_date
+)
+select customer_id,
+	product_name
+from table_1
+where rn = 1
+```
+![image](https://github.com/user-attachments/assets/5680fb55-449e-4c48-9f7d-953e9012a33e)
+
+### Conclusion
+A mmüşterisi üye olmadan hemen önce sushi ve curry siparişini aynı gün vermiş. B müşterisi ise sushi sipariş etmiş.
+
+-- 8. What is the total items and amount spent for each member before they became a member?
+
+Müşteri bazında gruplayarak sipariş ettikleri ürünleri saydırdım ve ödedikleri miktarı topladım
+
+```sql
+select s.customer_id,
+		count (s.product_id),
+		sum(price)
+from sales s
+join menu m on m.product_id = s.product_id
+join members mem on mem.customer_id = s.customer_id
+where join_date>order_date
+group by 1
+order by 1
+```
+#### Output
+![image](https://github.com/user-attachments/assets/60e2cdbe-d545-4e0b-90a9-da1e3b8a15d8)
+
+### Conclusion
+A müşterisi üye olmadan önce 2 ürün almış ve 25$ lık harcama yapmış. B müşterisi ise 3 ürün almış ve 40$ lık harcama yapmış.
+
+9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+
+#### Stage_1
+
+Öncelikle müşterilerin her bir aldıkları ürünü onun fiyatını ve bu üründen kaç puan kazandıklarını gösteren bir tablo oluşturdum.
+
+```sql
+select customer_id,
+		s.product_id,
+		product_name,
+		price,
+		case 
+			when product_name = 'sushi' then price * 2 * 10
+			else price * 10
+			end points
+from sales s
+full outer join menu m on m.product_id = s.product_id
+```
+
 
