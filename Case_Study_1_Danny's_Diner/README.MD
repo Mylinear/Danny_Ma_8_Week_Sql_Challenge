@@ -11,7 +11,7 @@ This repository contains the best solutions you'll find on the internet for Dann
   </a>
 </p>
 <p align="center">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/SfdS3WREZEo" frameborder="2" allowfullscreen></iframe>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/SfdS3WREZEo" frameborder="0" allowfullscreen></iframe>
 </p>
 
 
