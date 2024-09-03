@@ -6,6 +6,11 @@
 This repository contains the best solutions you'll find on the internet for Danny's Diner case study. I've solved and explained each question step by step, providing detailed explanations after each question, almost like preparing a report. Additionally, I've shared the solution to this case on my [YouTube channel](https://youtu.be/SfdS3WREZEo) (only available in Turkish).
 
 [![Watch the video](https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)](https://youtu.be/SfdS3WREZEo)
+<p align="center">
+  <a href="https://youtu.be/SfdS3WREZEo">
+    <img src="https://img.youtube.com/vi/SfdS3WREZEo/maxresdefault.jpg)" alt="YouTube Video" width="600">
+  </a>
+</p>
 
 ## Case Study Questions
 ### 1. What is the total amount each customer spent at the restaurant?
