@@ -15,6 +15,7 @@ This repository contains the best solutions you'll find on the internet for Dann
 </p>
 
 
+
 ## Case Study Questions
 ### 1. What is the total amount each customer spent at the restaurant?
 
