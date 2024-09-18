@@ -63,15 +63,16 @@ type timestamp
 using to_timestamp(pickup_time,'YY/MM/DD HH24:MI');
 
 `distance` ve `duration` sütunlarını da numeric değerlere dönüştürüyoruz. Böylece sayısal işlemler gerçekleştirebiliriz. 
-
+```sql
 ALTER TABLE runner_orders
 ALTER COLUMN distance
 TYPE float  --Buraya numeric real da yazabilirsiniz
 USING distance::double precision; -- Buraya real veya numeric de yazabilirsiniz.
-
+```
+```sql
 ALTER TABLE runner_orders
 ALTER  COLUMN duration
 TYPE int  
 USING duration::integer;
-
+```
 
