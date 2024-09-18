@@ -45,9 +45,8 @@ END,
 END,
     duration = CASE
     WHEN duration LIKE 'null' THEN NULL
-    WHEN duration LIKE '%mins' THEN TRIM(duration, 'mins')
-    WHEN duration LIKE '%minute' THEN TRIM(duration, 'minute')
-    WHEN duration LIKE '%minutes' THEN TRIM(duration, 'minutes') ELSE duration
+    WHEN duration LIKE '%min%' THEN TRIM(duration, 'minutes')
+	 ELSE duration
 END,
     cancellation = CASE
     WHEN cancellation = 'null' OR cancellation = '' THEN NULL ELSE cancellation
