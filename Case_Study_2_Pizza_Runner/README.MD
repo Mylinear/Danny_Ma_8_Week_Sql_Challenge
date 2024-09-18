@@ -52,6 +52,13 @@ END,
     WHEN cancellation = 'null' OR cancellation = '' THEN NULL ELSE cancellation
 END;
 ```
+let's check everything is ok
+```sql
+SELECT * from runner_orders
+```
+
+output
+![image](https://github.com/user-attachments/assets/e2c11021-626a-4782-9fd5-c66d3e39dd63)
 
 ### Changing Data Types
 
