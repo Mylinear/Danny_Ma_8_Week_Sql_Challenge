@@ -55,3 +55,23 @@ END,
 ```
 
 ### Veri tiplerinin değiştirilmesi
+`pickup_time` sütununu timestamp formatına dönüştürüyoruz. Böylece tarih işlemleri gerçekleştirebiliriz.
+
+alter table runner_orders
+alter COLUMN pickup_time
+type timestamp 
+using to_timestamp(pickup_time,'YY/MM/DD HH24:MI');
+
+`distance` ve `duration` sütunlarını da numeric değerlere dönüştürüyoruz. Böylece sayısal işlemler gerçekleştirebiliriz. 
+
+ALTER TABLE runner_orders
+ALTER COLUMN distance
+TYPE float  --Buraya numeric real da yazabilirsiniz
+USING distance::double precision; -- Buraya real veya numeric de yazabilirsiniz.
+
+ALTER TABLE runner_orders
+ALTER  COLUMN duration
+TYPE int  
+USING duration::integer;
+
+
