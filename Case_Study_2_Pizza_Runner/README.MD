@@ -14,6 +14,7 @@ SELECT order_id,
 FROM customer_orders;
 ``` 
 output 
+
 ![image](https://github.com/user-attachments/assets/c5775798-a74d-4bc9-85c7-bf79f6b170f9)
 
 Once I verified that the output matches the desired table structure, I proceed to update the table using the `UPDATE` and `SET` commands.
