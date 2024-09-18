@@ -1,78 +1,82 @@
 # Data Cleaning
 
-## Data cleaning for customer orders table
+## Customer Orders Table
 
-`customer_orders` tablosunda exclusions ve extras sütunlarında hem boş stringler var hem de string halinde null yazan değerler var. Amacımız bu string halindeki null değerleri ve boş string ifadeleri `NULL` değerlere dönüştürmek. Bunu yapabilmek için case when yapısı kullanıyoruz.
+In the `customer_orders` table, the `exclusions` and `extras` columns contain both empty strings and the word "null" stored as a string. Our goal is to replace these with actual `NULL` values. To achieve this, we use the `CASE WHEN` structure.
 
 ```sql
-select order_id,
-		customer_id,
-		pizza_id,
-		case when exclusions = 'null' or exclusions = ''  then NULL else exclusions END as exclusions,
-		case when extras = 'null' or extras = ''  then NULL else extras END as extras,
-		order_time
+SELECT order_id,
+       customer_id,
+       pizza_id,
+       CASE WHEN exclusions = 'null' OR exclusions = '' THEN NULL ELSE exclusions END AS exclusions,
+       CASE WHEN extras = 'null' OR extras = '' THEN NULL ELSE extras END AS extras,
+       order_time
 FROM customer_orders;
-```
+``` 
 output 
 ![image](https://github.com/user-attachments/assets/c5775798-a74d-4bc9-85c7-bf79f6b170f9)
 
-istediğim tabloya ulaştığıma emin olduktan sonra tablomu güncelliyorum. Bunu da update ve set komutları ile gerçekleştiriyorum. 
+Once I verified that the output matches the desired table structure, I proceed to update the table using the `UPDATE` and `SET` commands.
 
 ```sql
 UPDATE customer_orders
 SET exclusions = CASE
-    when exclusions = 'null' or exclusions = ''  then NULL else exclusions
+    WHEN exclusions = 'null' OR exclusions = '' THEN NULL ELSE exclusions
 END; 
 
 UPDATE customer_orders
 SET extras = CASE
-    when extras = 'null' or extras = ''  then NULL else extras
-END; 
+    WHEN extras = 'null' OR extras = '' THEN NULL ELSE extras
+END;
 ```
-### Data Cleaning for `runner_orders` table
 
-Tabloyu incelediğimizde `pickup_time` sütununda string halinde null yazdığını görüyoruz. `distance` sütununda aynı şekilde string halinde null yazılmış. ayrıca bu sütun sayısal veri tipinde olması gerekiyor ancak sütunda bir çok yerde `km` ifadelerinden geçiyor. Bizim bu harflerden oluşan ifadeleri temizlememiz gerekiyor.  Son olarak da sütunun veri tipini float tipine dönüştürmemiz gerekiyor.`cancellatinon` sütununda da string halinde null değerler var. Onların da `NULL` haline dönüştürülmesi gerekiyor.
+## Runner Orders Table
+
+When inspecting the `runner_orders` table, I noticed that the `pickup_time` column contains the word "null" stored as a string. The `distance` column also has "null" strings and includes the "km" suffix, despite it being a numeric field. We need to remove the "km" part and convert the column to a numeric data type. Lastly, the `cancellation` column also has string "null" values that need to be converted to `NULL`.
 
 ```sql
 UPDATE runner_orders
 SET pickup_time = CASE
-    when pickup_time = 'null' then NULL 
-			else pickup_time 
+    WHEN pickup_time = 'null' THEN NULL ELSE pickup_time
 END,
     distance = CASE
-    when distance = 'null' then NULL
-			when distance like '%km' then trim(distance,'km') else distance
+    WHEN distance = 'null' THEN NULL
+    WHEN distance LIKE '%km' THEN TRIM(distance, 'km') ELSE distance
 END,
     duration = CASE
-    when duration like 'null' then NULL
-				when duration like '%mins' then trim(duration,'mins')
-				when duration like '%minute' then trim(duration,'minute')
-				when duration like '%minutes' then trim(duration,'minutes') else duration
+    WHEN duration LIKE 'null' THEN NULL
+    WHEN duration LIKE '%mins' THEN TRIM(duration, 'mins')
+    WHEN duration LIKE '%minute' THEN TRIM(duration, 'minute')
+    WHEN duration LIKE '%minutes' THEN TRIM(duration, 'minutes') ELSE duration
 END,
-	cancellation = CASE
-	when cancellation = 'null' or cancellation ='' then NULL else cancellation END;
-
+    cancellation = CASE
+    WHEN cancellation = 'null' OR cancellation = '' THEN NULL ELSE cancellation
+END;
 ```
 
-### Veri tiplerinin değiştirilmesi
-`pickup_time` sütununu timestamp formatına dönüştürüyoruz. Böylece tarih işlemleri gerçekleştirebiliriz.
+### Changing Data Types
 
-alter table runner_orders
-alter COLUMN pickup_time
-type timestamp 
-using to_timestamp(pickup_time,'YY/MM/DD HH24:MI');
+To allow for time-based operations, I converted the `pickup_time` column to a `timestamp` format.
 
-`distance` ve `duration` sütunlarını da numeric değerlere dönüştürüyoruz. Böylece sayısal işlemler gerçekleştirebiliriz. 
+```sql
+ALTER TABLE runner_orders
+ALTER COLUMN pickup_time
+TYPE timestamp 
+USING to_timestamp(pickup_time, 'YY/MM/DD HH24:MI');
+```
+
+Next, I converted the `distance` and `duration` columns to numeric values to enable mathematical operations.
+
 ```sql
 ALTER TABLE runner_orders
 ALTER COLUMN distance
-TYPE float  --Buraya numeric real da yazabilirsiniz
-USING distance::double precision; -- Buraya real veya numeric de yazabilirsiniz.
+TYPE float  -- You can also use numeric or real here
+USING distance::double precision;
 ```
+
 ```sql
 ALTER TABLE runner_orders
-ALTER  COLUMN duration
+ALTER COLUMN duration
 TYPE int  
 USING duration::integer;
 ```
-
