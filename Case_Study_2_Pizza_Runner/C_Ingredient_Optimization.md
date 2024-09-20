@@ -137,3 +137,27 @@ order by 3 DESC
 output 
 
 ![image](https://github.com/user-attachments/assets/af87b381-f88c-4bb8-a877-c747aedae171)
+
+3. What was the most common exclusion?
+
+2.soruda yaptığım gibi önce exclusions sütunundaki değerleri ayrı bir satırda gösterip ardından her bir exclusion için sayrdıma işlemi yaptım.
+
+```sql
+with exclusions as(
+SELECT
+  order_id,
+  REGEXP_SPLIT_TO_TABLE(exclusions, '[,\s]+')::INTEGER AS exclusion_topping
+FROM customer_orders
+	)
+SELECT
+	exclusion_topping topping,
+	topping_name,
+	count(exclusion_topping)
+from exclusions e
+join pizza_toppings pt on pt.topping_id = e.exclusion_topping
+group by 1,2
+order by 3 DESC
+```
+output 
+
+![image](https://github.com/user-attachments/assets/a583bab0-0093-4a2d-829c-d8dfa8900614)
