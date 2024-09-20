@@ -85,4 +85,55 @@ output
 
 ![image](https://github.com/user-attachments/assets/60eb45be-5bac-4fc2-b6ba-d02508f05017)
 
-2. 
+2. What was the most commonly added extra?
+
+Stage 1
+Öncelikle yine extras sütunundaki değerleri her bir satırda ayrı ayrı göstermemiz gerekiyor. Bunu iki şekilde yapabiliriz.
+unnest ve string_to_array fonksiyonu kullanarak
+
+```sql
+SELECT 
+   pizza_id,
+    TRIM(both ' ' FROM unnest(string_to_array(extras, ',')))::int AS topping_id
+FROM customer_orders
+``` 
+output 
+
+![image](https://github.com/user-attachments/assets/1b591aa1-d7c8-4007-a167-1e42395185b7)
+
+
+diğer bir yol ise
+regex ile aynı tabloyu elde edebiliriz.
+```sql
+SELECT
+  order_id,
+  REGEXP_SPLIT_TO_TABLE(extras, '[,\s]+')::INTEGER AS extra_topping
+FROM customer_orders
+```
+output 
+
+![image](https://github.com/user-attachments/assets/55681660-2749-4f00-897a-2bde5de69f5d)
+
+Stage 2
+Biraz önceki elde ettiğim tabloyu bir CTE haline getiriyoum. Topping isimlerini görebilmek için `pizza_toppings` tablosuna joinliyorum. son olarak da her bir toppingi saydırıyorum.
+
+```sql
+with extras as(
+SELECT
+  order_id,
+  REGEXP_SPLIT_TO_TABLE(extras, '[,\s]+')::INTEGER AS extra_topping
+FROM customer_orders
+	)
+SELECT
+	extra_topping topping,
+	topping_name,
+	count(extra_topping)
+from extras e 
+join pizza_toppings pt on pt.topping_id = e.extra_topping
+group by 1,2
+order by 3 DESC
+```
+
+output 
+
+![image](https://github.com/user-attachments/assets/af87b381-f88c-4bb8-a877-c747aedae171)
