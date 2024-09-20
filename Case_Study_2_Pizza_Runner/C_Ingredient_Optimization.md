@@ -84,3 +84,5 @@ group by pizza_name
 output
 
 ![image](https://github.com/user-attachments/assets/60eb45be-5bac-4fc2-b6ba-d02508f05017)
+
+2. 
