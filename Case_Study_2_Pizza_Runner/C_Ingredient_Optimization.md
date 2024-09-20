@@ -15,6 +15,23 @@ SELECT
 FROM pizza_recipes
 ```
 bu kodda integer a cast etmemin sebebi regex bize string şeklinde çıktı verir. Bu yeni tabloyu başka bir tablo ile joinlemek istersem veri tipi uyuşmadığı için hata mesajı alırım.
+Output:
 
+![image](https://github.com/user-attachments/assets/75e68d29-1502-44ba-b022-f03e9200ced5)
+
+Böylece pizza içerisindeki her bir ürünü ayrı bir satırda gösterebiliyoruz.
+
+2. Yol: unnest ve string_to_array  fonksiyonları kullanarak aynı tabloyu elde edebiliriz.
+
+```sql
+SELECT 
+  pizza_id,
+  TRIM(both ' ' FROM unnest(string_to_array(toppings, ',')))::int AS topping_id
+FROM pizza_recipes c
+```
+yine ayni şekilde çıkan sonucu int cast ediyorum. Böylece başka tablolar ile joninleme işlemi yaptığımda hata almayacağım.
+
+output:
+![image](https://github.com/user-attachments/assets/b53979d2-028c-4fcf-830b-a2d73cc6791c)
 
 
